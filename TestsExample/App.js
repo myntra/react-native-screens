@@ -28,8 +28,7 @@ import Test748 from './src/Test748';
 import Test750 from './src/Test750';
 import Test765 from './src/Test765';
 import Test780 from './src/Test780';
-
-enableScreens();
+import Test913 from './src/Test913';
 
 export default function App() {
   return <Test42 />;
