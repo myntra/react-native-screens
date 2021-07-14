@@ -20,6 +20,13 @@ import androidx.fragment.app.Fragment;
 
 public class ScreenFragment extends Fragment {
 
+  public enum ScreenLifecycleEvent {
+    Appear,
+    WillAppear,
+    Disappear,
+    WillDisappear,
+  }
+
   protected static View recycleView(View view) {
     // screen fragments reuse view instances instead of creating new ones. In order to reuse a given
     // view it needs to be detached from the view hierarchy to allow the fragment to attach it back.
@@ -117,12 +124,7 @@ public class ScreenFragment extends Fragment {
         .getEventDispatcher()
         .dispatchEvent(new ScreenWillAppearEvent(mScreenView.getId()));
 
-    for (ScreenContainer sc : mChildScreenContainers) {
-      if (sc.getScreenCount() > 0) {
-        Screen topScreen = sc.getScreenAt(sc.getScreenCount() - 1);
-        topScreen.getFragment().dispatchOnWillAppear();
-      }
-    }
+    dispatchEventInChildContainers(ScreenLifecycleEvent.WillAppear);
   }
 
   protected void dispatchOnAppear() {
@@ -131,12 +133,7 @@ public class ScreenFragment extends Fragment {
             .getEventDispatcher()
             .dispatchEvent(new ScreenAppearEvent(mScreenView.getId()));
 
-    for (ScreenContainer sc : mChildScreenContainers) {
-      if (sc.getScreenCount() > 0) {
-        Screen topScreen = sc.getScreenAt(sc.getScreenCount() - 1);
-        topScreen.getFragment().dispatchOnAppear();
-      }
-    }
+    dispatchEventInChildContainers(ScreenLifecycleEvent.Appear);
   }
 
   protected void dispatchOnWillDisappear() {
@@ -145,12 +142,7 @@ public class ScreenFragment extends Fragment {
         .getEventDispatcher()
         .dispatchEvent(new ScreenWillDisappearEvent(mScreenView.getId()));
 
-    for (ScreenContainer sc : mChildScreenContainers) {
-      if (sc.getScreenCount() > 0) {
-        Screen topScreen = sc.getScreenAt(sc.getScreenCount() - 1);
-        topScreen.getFragment().dispatchOnWillDisappear();
-      }
-    }
+    dispatchEventInChildContainers(ScreenLifecycleEvent.WillDisappear);
   }
 
   protected void dispatchOnDisappear() {
@@ -159,11 +151,43 @@ public class ScreenFragment extends Fragment {
         .getEventDispatcher()
         .dispatchEvent(new ScreenDisappearEvent(mScreenView.getId()));
 
+    dispatchEventInChildContainers(ScreenLifecycleEvent.Disappear);
+  }
+
+  private void dispatchEventInChildContainers(ScreenLifecycleEvent event) {
     for (ScreenContainer sc : mChildScreenContainers) {
       if (sc.getScreenCount() > 0) {
         Screen topScreen = sc.getScreenAt(sc.getScreenCount() - 1);
         topScreen.getFragment().dispatchOnDisappear();
+        Screen topScreen = sc.getTopScreen();
+        if (topScreen != null
+            && topScreen.getFragment() != null
+            && (topScreen.getStackAnimation() != Screen.StackAnimation.NONE || isRemoving())) {
+          // we do not dispatch events in child when it has `none` animation
+          // and we are going forward since then they will be dispatched in child via
+          // `onCreateAnimation` of ScreenStackFragment
+          dispatchEvent(event, topScreen.getFragment());
+        }
       }
+    }
+  }
+
+  private void dispatchEvent(ScreenLifecycleEvent event, ScreenFragment fragment) {
+    switch (event) {
+      case Appear:
+        fragment.dispatchOnAppear();
+        break;
+      case WillAppear:
+        fragment.dispatchOnWillAppear();
+        break;
+      case Disappear:
+        fragment.dispatchOnDisappear();
+        break;
+      case WillDisappear:
+        fragment.dispatchOnWillDisappear();
+        break;
+      default:
+        break;
     }
   }
 
