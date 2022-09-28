@@ -111,6 +111,10 @@
     // that can handle it when dismissing a modal, the same for orientation
     [RNSScreenStackHeaderConfig updateWindowTraits];
     [_presentedModals removeObject:presentationController.presentedViewController];
+    // we double check if there are no new controllers pending to be presented since someone could
+    // have tried to push another one during the transition
+    _updatingModals = NO;
+    [self updateContainer];
     if (self.onFinishTransitioning) {
       // instead of directly triggering onFinishTransitioning this time we enqueue the event on the
       // main queue. We do that because onDismiss event is also enqueued and we want for the transition
@@ -362,6 +366,14 @@
 
         BOOL shouldAnimate = lastModal && [next isKindOfClass:[RNSScreen class]] && ((RNSScreenView *) next.view).stackAnimation != RNSScreenStackAnimationNone;
 
+        // if you want to present another modal quick enough after dismissing the previous one,
+        // it will result in wrong changeRootController, see repro in
+        // https://github.com/software-mansion/react-native-screens/issues/1299 We call `updateContainer` again in
+        // `presentationControllerDidDismiss` to cover this case and present new controller
+        if (previous.beingDismissed) {
+          return;
+        }
+
         [previous presentViewController:next
                                animated:shouldAnimate
                              completion:^{
@@ -434,34 +446,7 @@
     // nothing pushed yet
     [_controller setViewControllers:controllers animated:NO];
   } else if (top != lastTop) {
-    if (![controllers containsObject:lastTop]) {
-      // if the previous top screen does not exist anymore and the new top was not on the stack before, probably replace was called, so we check the animation
-      if ( ![_controller.viewControllers containsObject:top] && ((RNSScreenView *) top.view).replaceAnimation == RNSScreenReplaceAnimationPush) {
-        NSMutableArray *newControllers = [NSMutableArray arrayWithArray:controllers];
-        [_controller pushViewController:top animated:shouldAnimate];
-        [_controller setViewControllers:newControllers animated:NO];
-      } else {
-        // last top controller is no longer on stack
-        // in this case we set the controllers stack to the new list with
-        // added the last top element to it and perform (animated) pop
-        NSMutableArray *newControllers = [NSMutableArray arrayWithArray:controllers];
-        [newControllers addObject:lastTop];
-        [_controller setViewControllers:newControllers animated:NO];
-        [_controller popViewControllerAnimated:shouldAnimate];
-      }
-    } else if (![_controller.viewControllers containsObject:top]) {
-      // new top controller is not on the stack
-      // in such case we update the stack except from the last element with
-      // no animation and do animated push of the last item
-      NSMutableArray *newControllers = [NSMutableArray arrayWithArray:controllers];
-      [newControllers removeLastObject];
-      [_controller setViewControllers:newControllers animated:NO];
-      [_controller pushViewController:top animated:shouldAnimate];
-    } else {
-      // don't really know what this case could be, but may need to handle it
-      // somehow
-      [_controller setViewControllers:controllers animated:shouldAnimate];
-    }
+    [_controller setViewControllers:controllers animated:shouldAnimate];
   } else {
     // change wasn't on the top of the stack. We don't need animation.
     [_controller setViewControllers:controllers animated:NO];
