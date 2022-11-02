@@ -1,5 +1,6 @@
 package com.swmansion.rnscreens;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.view.View;
@@ -14,6 +15,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.facebook.react.ReactRootView;
+import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.modules.core.ChoreographerCompat;
 import com.facebook.react.modules.core.ReactChoreographer;
 
@@ -189,6 +191,13 @@ public class ScreenContainer<T extends ScreenFragment> extends ViewGroup {
     if (!(parent instanceof ReactRootView)) {
       throw new IllegalStateException("ScreenContainer is not attached under ReactRootView");
     }
+
+    Activity activity = ((ReactContext) getContext()).getCurrentActivity();
+    if (activity instanceof FragmentActivity) {
+      setFragmentManager(((FragmentActivity) activity).getSupportFragmentManager());
+      return;
+    }
+
     // ReactRootView is expected to be initialized with the main React Activity as a context but
     // in case of Expo the activity is wrapped in ContextWrapper and we need to unwrap it
     Context context = ((ReactRootView) parent).getContext();
@@ -318,7 +327,7 @@ public class ScreenContainer<T extends ScreenFragment> extends ViewGroup {
   }
 
   private void updateIfNeeded() {
-    if (!mNeedUpdate || !mIsAttached || mFragmentManager == null) {
+    if (!mNeedUpdate || !mIsAttached || mFragmentManager == null || mFragmentManager.isDestroyed()) {
       return;
     }
     mNeedUpdate = false;
