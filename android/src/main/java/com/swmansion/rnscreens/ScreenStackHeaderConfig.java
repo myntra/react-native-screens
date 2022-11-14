@@ -44,7 +44,7 @@ public class ScreenStackHeaderConfig extends ViewGroup {
   private boolean mIsTranslucent;
   private int mTintColor;
   private final Toolbar mToolbar;
-  private int mScreenOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED;
+  private int mScreenOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
 
   private boolean mIsAttachedToWindow = false;
 
