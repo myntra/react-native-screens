@@ -53,7 +53,7 @@
     "@types/babel__traverse": "7.14.2",
     "@types/keyv": "3.1.4",
     "@babel/core": "^7.11.0",
-    "@react-native-community/bob": "^0.17.1",
+    "react-native-builder-bob": "^0.17.1",
     "@react-navigation/native": "^5.8.0",
     "@react-navigation/stack": "^5.10.0",
     "@types/jest": "^26.0.8",
@@ -95,7 +95,7 @@
       "git add"
     ]
   },
-  "@react-native-community/bob": {
+  "react-native-builder-bob": {
     "source": "src",
     "output": "lib",
     "targets": [
