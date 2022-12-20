@@ -162,6 +162,13 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
         check(parent is ReactRootView) { "ScreenContainer is not attached under ReactRootView" }
         // ReactRootView is expected to be initialized with the main React Activity as a context but
         // in case of Expo the activity is wrapped in ContextWrapper and we need to unwrap it
+
+        val activity = (context as ReactContext).currentActivity
+        if (activity != null && activity is FragmentActivity) {
+            setFragmentManager(activity.supportFragmentManager)
+            return
+        }
+
         var context = parent.context
         while (context !is FragmentActivity && context is ContextWrapper) {
             context = context.baseContext
