@@ -53,8 +53,8 @@
   },
   "homepage": "https://github.com/software-mansion/react-native-screens#readme",
   "dependencies": {
-    "react-freeze": "1.0.0",
-    "warn-once": "0.1.0"
+    "react-freeze": "^1.0.0",
+    "warn-once": "^0.1.0"
   },
   "peerDependencies": {
     "react": "*",
@@ -66,9 +66,9 @@
     "@types/keyv": "3.1.4",
     "@babel/core": "^7.11.0",
     "@babel/types": "7.22.5",
-    "@react-native-community/bob": "0.17.1",
-    "@react-navigation/native": "5.8.0",
-    "@react-navigation/stack": "5.10.0",
+    "@react-native-community/bob": "^0.17.1",
+    "@react-navigation/native": "^5.8.0",
+    "@react-navigation/stack": "^5.10.0",
     "@types/jest": "^26.0.8",
     "@types/react": "^16.9.44",
     "@types/react-native": "^0.63.2",
@@ -89,7 +89,7 @@
     "eslint-plugin-react-hooks": "^4.2.0",
     "eslint-plugin-react-native": "^3.2.1",
     "eslint-plugin-standard": "^4.0.1",
-    "husky": "7.0.1",
+    "husky": "^7.0.1",
     "jest": "^26.2.2",
     "jest-react-native": "18.0.0",
     "lint-staged": "^11.1.2",
@@ -98,8 +98,8 @@
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-native": "^0.63.2",
-    "react-native-reanimated": "2.2.0",
-    "react-native-safe-area-context": "3.1.9",
+    "react-native-reanimated": "^2.2.0",
+    "react-native-safe-area-context": "^3.1.9",
     "react-native-windows": "0.65.14",
     "react-navigation": "^4.4.3",
     "react-navigation-stack": "^2.9.0",
