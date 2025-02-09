@@ -64,8 +64,8 @@
     "@types/babel__traverse": "7.14.2",
     "@types/node": "18.11.18",
     "@types/keyv": "3.1.4",
-    "@babel/core": "^7.11.0",
-    "@babel/types": "7.22.5",
+    "@babel/core": "7.25.2",
+    "@babel/types": "7.25.6",
     "@react-native-community/bob": "^0.17.1",
     "@react-navigation/native": "^5.8.0",
     "@react-navigation/stack": "^5.10.0",
@@ -105,7 +105,7 @@
     "react-navigation-stack": "^2.9.0",
     "react-test-renderer": "^16.13.1",
     "release-it": "^13.5.2",
-    "typescript": "3.8.3"
+    "typescript": "^3.9.7"
   },
   "lint-staged": {
     "{src,Example}/**/*.{js,ts,tsx}": "yarn format-js",
